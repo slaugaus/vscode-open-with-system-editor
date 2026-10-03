@@ -1,5 +1,5 @@
-import sysOpen = require('open');
-import * as vscode from 'vscode';
+import open from "tiny-open";
+import * as vscode from "vscode";
 
 export function activate(context: vscode.ExtensionContext) {
 	context.subscriptions.push(OpenWithSystemEditorProvider.register());
@@ -20,29 +20,29 @@ export class OpenWithSystemEditorProvider implements vscode.CustomEditorProvider
 		_token: vscode.CancellationToken
 	): Promise<void> {
 		panel.webview.html = "Opened a file in an external program. I should close shortly, but it's OK to close me if not.";
-		this._openFile(document.uri);
+		await this.openFile(document.uri);
 		// Calling dispose directly shows an error message, but doing it with setInterval doesn't!
 		setInterval(() => panel.dispose(), 0);
 	}
 
-	private _openFile(uri: vscode.Uri): void {
-		if (uri.scheme) {
-			// console.log("Opening from uri", uri.toString());
-			try {
-				sysOpen(decodeURIComponent(uri.toString())).then((process) => {
-					process.on("exit", (code) => {
-						if (code !== 0) {
-							vscode.window.showErrorMessage(`Couldn't open file: Process exited with code ${code}.`);
-						}
-					});
-				});
-			} catch (error) {
-				vscode.window.showErrorMessage(`Couldn't open file: ${error}`);
-			}
+	private displayError(err: unknown): void {
+		vscode.window.showErrorMessage(`Couldn't open file: ${err}`);
+	}
 
+	private async openFile(uri: vscode.Uri): Promise<void> {
+		if (!uri.scheme) {
+			this.displayError(`Problematic URI: ${uri.toString()}`);
 			return;
 		}
-		vscode.window.showErrorMessage(`Couldn't open file: Problematic URI: ${uri.toString()}`);
+
+		// console.log("Opening from uri", uri.toString());
+		try {
+			if (!(await open(decodeURIComponent(uri.toString())))) {
+				this.displayError("process exited with nonzero exit code");
+			}
+		} catch (error) {
+			this.displayError(error);
+		}
 	}
 
 	//#region CustomEditorProvider Stubs

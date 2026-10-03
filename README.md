@@ -6,7 +6,7 @@ With respect to [sandcastle's Open](https://github.com/sandcastle/vscode-open), 
 
 ## Why use this?
 
-To my knowledge, all the other extensions like this are adding commands or context menu items. Because this one pretends to be a custom editor, you can set it as the primary handler of a filetype, meaning all you have to do from then on is click the file and it'll open in the external editor.
+To my knowledge, all the other extensions like this add commands or context menu items. Because this one pretends to be a custom editor, you can set it as the primary handler of a filetype, meaning all you have to do from then on is click the file and it'll open in the external editor.
 
 ## Usage
 
@@ -29,9 +29,15 @@ TODO: Record GIFs
 
 This took me like an hour to make, there's probably something.
 
-Only tested on Windows.
+Tested on Windows and Linux, but not WSL, Dev Containers, vscode.dev, etc.
 
 ## Release Notes
+
+### 0.2.0
+
+Swapped out [`open`](https://npmx.dev/package/open) for [`tiny-open`](https://npmx.dev/package/tiny-open) to theoretically support WSL.
+
+Further improvements to overall system stability and other minor adjustments have been made to enhance the user experience.
 
 ### 0.1.0
 
